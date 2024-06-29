@@ -5,12 +5,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseUser;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import com.hoho.instago.Like.LikeFragment;
@@ -20,7 +23,15 @@ import com.hoho.instago.Search.SearchFragment;
 import com.hoho.instago.Utils.UniversalImageLoader;
 import com.hoho.instago.home.HomeFragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.zegocloud.uikit.prebuilt.call.ZegoUIKitPrebuiltCallService;
+import com.zegocloud.uikit.prebuilt.call.invite.ZegoUIKitPrebuiltCallInvitationConfig;
+
 public class Home extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    String myUserid;
+    String myUserName;
+    FirebaseUser fuser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +42,20 @@ public class Home extends AppCompatActivity implements BottomNavigationView.OnNa
         String name = getIntent().getStringExtra("PAGE");
         if (name != null){
             loadfragment(new HomeFragment());
-
         }else{
             loadfragment(new HomeFragment());
-
         }
-
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+        myUserid = fuser.getUid();
+        myUserName = fuser.getDisplayName();
+        if (myUserName.isEmpty()) {
+            myUserName = myUserid;
+        }
+        Toast.makeText(this, "Welcome to InstaGo " + myUserName, Toast.LENGTH_SHORT).show();
+        if (myUserid.isEmpty() == false){
+            startService(myUserid, myUserName);
+            Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
+        }
     }
     private boolean loadfragment(Fragment fragment) {
         if (fragment != null) {
@@ -45,6 +64,16 @@ public class Home extends AppCompatActivity implements BottomNavigationView.OnNa
         }
 
         return false;
+    }
+
+    void startService(String userID, String userName) {
+        Application application = getApplication(); // Android's application context
+        long appID = 1444059904;   // yourAppID
+        String appSign = "e68d7a63da606db7bddeaceaf3c054c6b798244ca6a7be2c0d4c4331a0659e60";  // yourAppSign
+
+        ZegoUIKitPrebuiltCallInvitationConfig callInvitationConfig = new ZegoUIKitPrebuiltCallInvitationConfig();
+
+        ZegoUIKitPrebuiltCallService.init(getApplication(), appID, appSign, userID, userName, callInvitationConfig);
     }
 
     @Override

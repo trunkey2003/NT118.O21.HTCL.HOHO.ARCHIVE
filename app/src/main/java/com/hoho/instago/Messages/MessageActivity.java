@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +33,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +48,9 @@ import com.hoho.instago.Messages.Notification.NotificationSender;
 import com.hoho.instago.Messages.Notification.Token;
 import com.hoho.instago.R;
 import com.hoho.instago.models.Users;
+import com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton;
+import com.zegocloud.uikit.service.defines.ZegoUIKitUser;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -70,6 +75,8 @@ public class MessageActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     String userid;
+    String myUserid;
+    ZegoSendCallInvitationButton voiceCallBtn, videoCallBtn;
 
     private APIService apiService;
 
@@ -88,6 +95,8 @@ public class MessageActivity extends AppCompatActivity {
         profile_image = (CircleImageView)findViewById(R.id.MessageActivity_user_img);
         btn_send =findViewById(R.id.MessageActivity_btn_send);
         text_send = findViewById(R.id.MessageActivity_text_send);
+        voiceCallBtn = findViewById(R.id.MessageActivity_voice_call_button);
+        videoCallBtn = findViewById(R.id.MessageActivity_video_call_button);
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
@@ -99,8 +108,11 @@ public class MessageActivity extends AppCompatActivity {
 
         intent = getIntent();
         userid = intent.getStringExtra("userid");
+        setVoiceCall(userid);
+        setVideoCall(userid);
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
+        myUserid = fuser.getUid();
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -135,9 +147,19 @@ public class MessageActivity extends AppCompatActivity {
                 closeKeyboard();
             }
         });
-
     }
 
+    void setVoiceCall(String targetUserID){
+        voiceCallBtn.setIsVideoCall(false);
+        voiceCallBtn.setResourceID("zego_uikit_call"); // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        voiceCallBtn.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID)));
+    }
+
+    void setVideoCall(String targetUserID){
+        videoCallBtn.setIsVideoCall(true);
+        videoCallBtn.setResourceID("zego_uikit_call"); // Please fill in the resource ID name that has been configured in the ZEGOCLOUD's console here.
+        videoCallBtn.setInvitees(Collections.singletonList(new ZegoUIKitUser(targetUserID)));
+    }
     private void sendMessage(String sender, final String receiver, String message){
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();

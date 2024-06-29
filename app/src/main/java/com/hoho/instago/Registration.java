@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -26,6 +27,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,15 +48,15 @@ import com.hoho.instago.models.privatedetails;
 public class Registration extends AppCompatActivity {
 
     TextView alreadyhaveacc;
-    TextInputLayout Fname,Username, Email, Pass, Mobileno,Gender,Description,Website;
+    TextInputLayout Fname, Username, Email, Pass, Mobileno, Gender, Description, Website;
     EditText Birth;
-    int year,month,day;
+    int year, month, day;
     Button register;
     CountryCodePicker Cpp;
     FirebaseAuth FAuth;
     DatabaseReference databaseReference;
     FirebaseDatabase firebaseDatabase;
-    String fname,username,email,pass,mobileno,gender,description,website,birth;
+    String fname, username, email, pass, mobileno, gender, description, website, birth;
     String useridd;
     AnimationDrawable anim;
 
@@ -62,8 +65,8 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        alreadyhaveacc = (TextView)findViewById(R.id.AlreadyHavesignin);
-        Birth = (EditText)findViewById(R.id.birthdate);
+        alreadyhaveacc = (TextView) findViewById(R.id.AlreadyHavesignin);
+        Birth = (EditText) findViewById(R.id.birthdate);
         Fname = (TextInputLayout) findViewById(R.id.Fullname);
         Username = (TextInputLayout) findViewById(R.id.Username);
         Email = (TextInputLayout) findViewById(R.id.signup_email);
@@ -77,16 +80,14 @@ public class Registration extends AppCompatActivity {
 
         register = (Button) findViewById(R.id.signup_button);
 
-//******************************BACKGROUND ANIMATION*************************
+        // ******************************BACKGROUND ANIMATION*************************
         RelativeLayout container = (RelativeLayout) findViewById(R.id.relative_registration);
 
         anim = (AnimationDrawable) container.getBackground();
         anim.setEnterFadeDuration(6000);
         anim.setExitFadeDuration(2000);
 
-//******************************BACKGROUND ANIMATION*************************
-
-
+        // ******************************BACKGROUND ANIMATION*************************
 
         Birth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,12 +96,13 @@ public class Registration extends AppCompatActivity {
                 year = calendar.get(Calendar.YEAR);
                 month = calendar.get(Calendar.MONTH);
                 day = calendar.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog datePickerDialog = new DatePickerDialog(Registration.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        Birth.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
-                    }
-                },year,month,day);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(Registration.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                Birth.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                            }
+                        }, year, month, day);
                 datePickerDialog.show();
 
             }
@@ -115,12 +117,10 @@ public class Registration extends AppCompatActivity {
             }
         });
 
-
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
         FAuth = FirebaseAuth.getInstance();
-//        useridd = FAuth.getCurrentUser().getUid();
-
+        // useridd = FAuth.getCurrentUser().getUid();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,91 +138,127 @@ public class Registration extends AppCompatActivity {
 
                 if (isValid()) {
 
-                    databaseReference.child("Users").orderByChild("Username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(snapshot.exists()){
-                                Toast.makeText(Registration.this, "Username already exists. Please try other username.", Toast.LENGTH_SHORT).show();
+                    databaseReference.child("Users").orderByChild("Username").equalTo(username)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        Toast.makeText(Registration.this,
+                                                "Username already exists. Please try other username.",
+                                                Toast.LENGTH_SHORT).show();
 
+                                    } else {
+                                        final ProgressDialog mDialog = new ProgressDialog(Registration.this);
+                                        mDialog.setCancelable(false);
+                                        mDialog.setCanceledOnTouchOutside(false);
+                                        mDialog.setMessage("Registering please wait...");
+                                        mDialog.show();
 
-                            }else {
-                                final ProgressDialog mDialog = new ProgressDialog(Registration.this);
-                                mDialog.setCancelable(false);
-                                mDialog.setCanceledOnTouchOutside(false);
-                                mDialog.setMessage("Registering please wait...");
-                                mDialog.show();
+                                        FAuth.createUserWithEmailAndPassword(email, pass)
+                                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        if (task.isSuccessful()) {
 
-                                FAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
+                                                            useridd = FAuth.getCurrentUser().getUid();
 
-                                            useridd = FAuth.getCurrentUser().getUid();
+                                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                                    .setDisplayName(fname).build();
+    
+                                                            user.updateProfile(profileUpdates)
+                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+//                                                                            if (task.isSuccessful()) {
+//
+//                                                                            }
+                                                                        }
+                                                                    });
 
-                                            addUsers(description,fname,username,website);
-                                            addPrivateDetails(useridd,email,gender,birth,mobileno);
-                                            addPasswords(pass);
+                                                            addUsers(description, fname, username, website);
+                                                            addPrivateDetails(useridd, email, gender, birth, mobileno);
+                                                            addPasswords(pass);
 
-                                            mDialog.dismiss();
+                                                            mDialog.dismiss();
 
-                                            FAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        AlertDialog.Builder builder = new AlertDialog.Builder(Registration.this);
-                                                        builder.setMessage("Registered Successfully,Please Verify your Email");
-                                                        builder.setCancelable(false);
-                                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
+                                                            FAuth.getCurrentUser().sendEmailVerification()
+                                                                    .addOnCompleteListener(
+                                                                            new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(
+                                                                                        @NonNull Task<Void> task) {
+                                                                                    if (task.isSuccessful()) {
+                                                                                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                                                                                Registration.this);
+                                                                                        builder.setMessage(
+                                                                                                "Registered Successfully,Please Verify your Email");
+                                                                                        builder.setCancelable(false);
+                                                                                        builder.setPositiveButton("OK",
+                                                                                                new DialogInterface.OnClickListener() {
+                                                                                                    @Override
+                                                                                                    public void onClick(
+                                                                                                            DialogInterface dialog,
+                                                                                                            int which) {
 
-                                                                dialog.dismiss();
+                                                                                                        dialog.dismiss();
 
-                                                                String phonenumber = Cpp.getSelectedCountryCodeWithPlus() + mobileno;
-                                                                Intent b = new Intent(Registration.this, VerifyPhone.class);
-                                                                b.putExtra("phonenumber", phonenumber);
-                                                                startActivity(b);
+                                                                                                        String phonenumber = Cpp
+                                                                                                                .getSelectedCountryCodeWithPlus()
+                                                                                                                + mobileno;
+                                                                                                        Intent b = new Intent(
+                                                                                                                Registration.this,
+                                                                                                                VerifyPhone.class);
+                                                                                                        b.putExtra(
+                                                                                                                "phonenumber",
+                                                                                                                phonenumber);
+                                                                                                        startActivity(
+                                                                                                                b);
 
-                                                            }
-                                                        });
-                                                        AlertDialog alert = builder.create();
-                                                        alert.show();
+                                                                                                    }
+                                                                                                });
+                                                                                        AlertDialog alert = builder
+                                                                                                .create();
+                                                                                        alert.show();
 
-                                                    } else {
-                                                        mDialog.dismiss();
-                                                        ReusableCodeForAll.ShowAlert(Registration.this, "Error", task.getException().getMessage());
+                                                                                    } else {
+                                                                                        mDialog.dismiss();
+                                                                                        ReusableCodeForAll.ShowAlert(
+                                                                                                Registration.this,
+                                                                                                "Error",
+                                                                                                task.getException()
+                                                                                                        .getMessage());
+
+                                                                                    }
+                                                                                }
+                                                                            });
+
+                                                        } else {
+                                                            mDialog.dismiss();
+                                                            ReusableCodeForAll.ShowAlert(Registration.this, "Error",
+                                                                    task.getException().getMessage());
+                                                        }
 
                                                     }
-                                                }
-                                            });
-
-
-                                        } else {
-                                            mDialog.dismiss();
-                                            ReusableCodeForAll.ShowAlert(Registration.this, "Error", task.getException().getMessage());
-                                        }
+                                                });
 
                                     }
-                                });
+                                }
 
-                            }
-                        }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+                                }
+                            });
 
                 }
-
-
 
             }
         });
 
     }
-    String emailpattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
+    String emailpattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,24}$";
 
     public boolean isValid() {
         Email.setErrorEnabled(false);
@@ -237,10 +273,11 @@ public class Registration extends AppCompatActivity {
         Mobileno.setError("");
         Gender.setErrorEnabled(false);
         Gender.setError("");
-//        Birth.setErrorEnabled(false);
-//        Birth.setError("");
+        // Birth.setErrorEnabled(false);
+        // Birth.setError("");
 
-        boolean isValidname = false, isValidemail = false, isvalidpassword = false, isvalid = false, isvalidmobileno = false, isvalidgender = false , isvalidusername=false;
+        boolean isValidname = false, isValidemail = false, isvalidpassword = false, isvalid = false,
+                isvalidmobileno = false, isvalidgender = false, isvalidusername = false;
         if (TextUtils.isEmpty(fname)) {
             Fname.setErrorEnabled(true);
             Fname.setError("Fullname is required");
@@ -286,19 +323,22 @@ public class Registration extends AppCompatActivity {
             Gender.setError("Field cannot be empty");
         } else {
             isvalidgender = true;
-        }if (TextUtils.isEmpty(username)) {
+        }
+        if (TextUtils.isEmpty(username)) {
             Username.setErrorEnabled(true);
             Username.setError("Field cannot be empty");
         } else {
             isvalidusername = true;
         }
 
-        isvalid = (isValidname  && isValidemail && isvalidpassword && isvalidmobileno &&  isvalidgender && isvalidusername) ? true : false;
+        isvalid = (isValidname && isValidemail && isvalidpassword && isvalidmobileno && isvalidgender
+                && isvalidusername) ? true : false;
         return isvalid;
     }
 
-//******************************FUNCTIONS TO ADD DATA'S TO FIREBASE*************************
-    public void addUsers(String Discription,String FullName,String Username,String Website){
+    // ******************************FUNCTIONS TO ADD DATA'S TO
+    // FIREBASE*************************
+    public void addUsers(String Discription, String FullName, String Username, String Website) {
 
         Users user = new Users(
                 Discription,
@@ -309,30 +349,30 @@ public class Registration extends AppCompatActivity {
                 "https://trunkey2003.github.io/general-img/default-profile-pic.jpg",
                 Username,
                 Website,
-                useridd
-        );
+                useridd);
         databaseReference.child("Users").child(useridd).setValue(user);
     }
-    public void addPrivateDetails(String user_id, String email, String gender, String birthdate, String phoneNumber){
+
+    public void addPrivateDetails(String user_id, String email, String gender, String birthdate, String phoneNumber) {
 
         privatedetails details = new privatedetails(
                 user_id,
                 email,
                 gender,
                 birthdate,
-                phoneNumber
-        );
+                phoneNumber);
         databaseReference.child("Privatedetails").child(useridd).setValue(details);
     }
-    public void addPasswords(String passwords){
+
+    public void addPasswords(String passwords) {
 
         Passwords pass = new Passwords(passwords);
         databaseReference.child("Passwords").child(useridd).setValue(pass);
 
     }
-//*******************************************************************************
+    // *******************************************************************************
 
-//******************************BACKGROUND ANIMATION*************************
+    // ******************************BACKGROUND ANIMATION*************************
     // Starting animation:- start the animation on onResume.
     @Override
     protected void onResume() {
@@ -348,6 +388,6 @@ public class Registration extends AppCompatActivity {
         if (anim != null && anim.isRunning())
             anim.stop();
     }
-//****************************************************************************
+    // ****************************************************************************
 
 }

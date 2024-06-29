@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="#EFEEEE"
         android:id="@+id/MessageActivity_bar_layout">
-        
+
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,6 +25,7 @@
                 android:src="@drawable/defualt_insta_pic"/>
 
             <LinearLayout
+                android:id="@+id/MessageActivity_user_inf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -49,6 +50,24 @@
 
 
             </LinearLayout>
+
+            <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/MessageActivity_voice_call_button"
+                android:layout_toLeftOf="@id/MessageActivity_user_inf"
+                android:layout_marginHorizontal="10dp"
+                />
+
+            <com.zegocloud.uikit.prebuilt.call.invite.widget.ZegoSendCallInvitationButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/MessageActivity_video_call_button"
+                android:layout_marginHorizontal="10dp"
+                />
 
 
         </androidx.appcompat.widget.Toolbar>

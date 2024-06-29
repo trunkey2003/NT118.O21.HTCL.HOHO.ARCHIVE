@@ -11,10 +11,25 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="clipartAsset">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../ProgramData/Android/SDK/icons/material/materialicons/call/baseline_call_24.xml" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="instago_logo" />
+                            <entry key="color" value="757575" />
+                            <entry key="outputName" value="baseline_call_24" />
                             <entry key="sourceFile" value="D:\Users\Documents\Mobile\InstaGo-Remake\app\src\main\res\drawable\instago_logo.svg" />
                           </map>
                         </option>
