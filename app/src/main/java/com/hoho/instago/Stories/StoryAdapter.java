@@ -32,6 +32,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
     private Context mcontext;
     private List<Story> mstory;
 
+
     public StoryAdapter(Context mcontext, List<Story> mstory) {
         this.mcontext = mcontext;
         this.mstory = mstory;
@@ -152,26 +153,26 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
                 if (click) {
                     if (count > 0) {
-                        AlertDialog alertDialog = new AlertDialog.Builder(mcontext).create();
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "View Story",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+//                        AlertDialog alertDialog = new AlertDialog.Builder(mcontext).create();
+//                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "View Story",
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int which) {
                                         //TODO: go to story
                                         Intent intent = new Intent(mcontext, StoryActivity.class);
                                         intent.putExtra("userid", FirebaseAuth.getInstance().getCurrentUser().getUid());
                                         mcontext.startActivity(intent);
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Add Story",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(mcontext, AddStoryActivity.class);
-                                        mcontext.startActivity(intent);
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
+//                                        dialog.dismiss();
+//                                    }
+//                                });
+//                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Add Story",
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        Intent intent = new Intent(mcontext, AddStoryActivity.class);
+//                                        mcontext.startActivity(intent);
+//                                        dialog.dismiss();
+//                                    }
+//                                });
+//                        alertDialog.show();
                     } else {
                         Intent intent = new Intent(mcontext, AddStoryActivity.class);
                         mcontext.startActivity(intent);

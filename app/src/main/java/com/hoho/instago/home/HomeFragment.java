@@ -1,5 +1,6 @@
 package com.hoho.instago.home;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.hoho.instago.Stories.AddStoryActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -46,8 +48,9 @@ import com.hoho.instago.models.Photo;
 import com.hoho.instago.models.Story;
 
 public class HomeFragment extends Fragment {
-
     private static final String TAG = "HomeFragment";
+
+    private Context mcontext;
 
     //vars
     private ArrayList<Photo> mPhotos;
@@ -57,6 +60,8 @@ public class HomeFragment extends Fragment {
     private HomeFragmentPostViewListAdapter mAdapter;
     private int mResults;
     ImageView message;
+
+    private ImageView camera;
 
 
     private RecyclerView recyclerView_story;
@@ -91,6 +96,14 @@ public class HomeFragment extends Fragment {
         storyAdapter = new StoryAdapter(getContext(),storyList);
         recyclerView_story.setAdapter(storyAdapter);
 
+        camera = v.findViewById(R.id.camera);
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AddStoryActivity.class);
+                startActivity(intent);
+            }
+        });
 
         getFollowing();
         initImageLoader();

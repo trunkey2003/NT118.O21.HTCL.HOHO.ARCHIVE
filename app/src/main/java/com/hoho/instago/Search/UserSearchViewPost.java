@@ -82,7 +82,6 @@ public class UserSearchViewPost extends AppCompatActivity {
         mHeartRed = (ImageView)findViewById(R.id.UserSearchViewPost_img_heart_red);
         mHeart = (ImageView)findViewById(R.id.UserSearchViewPost_img_heart);
         mProfileImage = (ImageView)findViewById(R.id.UserSearchViewPost_user_img);
-        moption = (ImageView)findViewById(R.id.UserSearchViewPost_option);
         msend = (ImageView)findViewById(R.id.UserSearchViewPost_img_send);
         mProgressBar = (ProgressBar)findViewById(R.id.UserSearchViewPost_ProgressBar);
 
