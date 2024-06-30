@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "656111791182-inhl38df7skn9dfvvfevkr0hblbv53ha.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hoho.instago",
+            "certificate_hash": "d10de8447fb1ae9d7bf03f5029c511c274c8ed09"
+          }
+        },
+        {
           "client_id": "656111791182-nq36jf5ptebpvjhlsk6i508710rin9mi.apps.googleusercontent.com",
           "client_type": 3
         }
