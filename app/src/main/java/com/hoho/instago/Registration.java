@@ -28,6 +28,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +41,7 @@ import com.hbb20.CountryCodePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import com.hoho.instago.ReusableCode.ReusableCodeForAll;
 import com.hoho.instago.models.Passwords;
@@ -232,7 +235,7 @@ public class Registration extends AppCompatActivity {
                                                                                     }
                                                                                 }
                                                                             });
-
+                                                           sendVerificationCode(Cpp.getSelectedCountryCodeWithPlus() + mobileno);
                                                         } else {
                                                             mDialog.dismiss();
                                                             ReusableCodeForAll.ShowAlert(Registration.this, "Error",
@@ -257,6 +260,19 @@ public class Registration extends AppCompatActivity {
         });
 
     }
+
+   private void sendVerificationCode(String number) {
+       // this method is used for getting
+       // OTP on user phone number.
+       PhoneAuthOptions options =
+               PhoneAuthOptions.newBuilder(FAuth)
+                       .setPhoneNumber(number)            // Phone number to verify
+                       .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                       .setActivity(this)                 // Activity (for callback binding)
+//                        .setCallbacks(mCallBack)           // OnVerificationStateChangedCallbacks
+                       .build();
+       PhoneAuthProvider.verifyPhoneNumber(options);
+   }
 
     String emailpattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,24}$";
 
