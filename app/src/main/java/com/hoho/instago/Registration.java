@@ -235,7 +235,7 @@ public class Registration extends AppCompatActivity {
                                                                                     }
                                                                                 }
                                                                             });
-                                                           sendVerificationCode(Cpp.getSelectedCountryCodeWithPlus() + mobileno);
+//                                                            sendVerificationCode(Cpp.getSelectedCountryCodeWithPlus() + mobileno);
                                                         } else {
                                                             mDialog.dismiss();
                                                             ReusableCodeForAll.ShowAlert(Registration.this, "Error",
