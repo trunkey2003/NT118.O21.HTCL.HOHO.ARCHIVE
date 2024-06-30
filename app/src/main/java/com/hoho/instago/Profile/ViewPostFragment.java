@@ -564,8 +564,12 @@ public class ViewPostFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             // Xóa thành công dữ liệu từ Firebase Database
                             Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
-                            reloadProfileFragment();
+                            // descreate the post count
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+                            reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("posts").setValue(String.valueOf(Integer.parseInt(user.getPosts())-1));
 
+
+                            reloadProfileFragment();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -601,6 +605,8 @@ public class ViewPostFragment extends Fragment {
             }
         });
     }
+
+
 
     private void reloadProfileFragment() {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
