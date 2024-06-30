@@ -106,6 +106,14 @@ public class ViewComments extends AppCompatActivity {
             }
         });
 
+        // Bắt sự kiện click vào nút back
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 
 
     }
@@ -291,8 +299,15 @@ public class ViewComments extends AppCompatActivity {
         hashMappp.put("postid",postid);
         hashMappp.put("ispost", true);
         reference.child(userid).push().setValue(hashMappp);
-
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // Thực hiện các hành động cần thiết khi quay lại
+        finish(); // Kết thúc Activity hiện tại khi quay lại
+    }
+
 
 
 }

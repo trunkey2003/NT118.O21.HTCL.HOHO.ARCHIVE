@@ -30,16 +30,18 @@
         android:paddingEnd="15dp"
         android:paddingStart="15dp"
         android:layout_below="@id/instago">
+
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="10dp"
             android:hint="Email"
             android:textColor="@color/black"
-            android:textColorHint="@color/instacenterclord"
+            android:textColorHint="@color/black"
             android:backgroundTint="@color/instacenterclord"
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <!--*******password**********-->
     <com.google.android.material.textfield.TextInputLayout
