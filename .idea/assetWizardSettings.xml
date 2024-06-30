@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../../../ProgramData/Android/SDK/icons/material/materialicons/call/baseline_call_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/delete/baseline_delete_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="757575" />
-                            <entry key="outputName" value="baseline_call_24" />
+                            <entry key="outputName" value="baseline_delete_24" />
                             <entry key="sourceFile" value="D:\Users\Documents\Mobile\InstaGo-Remake\app\src\main\res\drawable\instago_logo.svg" />
                           </map>
                         </option>

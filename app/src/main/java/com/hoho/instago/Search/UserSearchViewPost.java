@@ -37,6 +37,8 @@ import com.hoho.instago.Utils.UniversalImageLoader;
 import com.hoho.instago.models.Likes;
 import com.hoho.instago.models.Photo;
 import com.hoho.instago.models.Users;
+import androidx.appcompat.widget.PopupMenu;
+import android.view.MenuItem;
 
 public class UserSearchViewPost extends AppCompatActivity {
 
@@ -100,7 +102,30 @@ public class UserSearchViewPost extends AppCompatActivity {
         }catch (NullPointerException e){
             Log.e(TAG, "onCreateView: NullPointerException: " + e.getMessage() );
         }
+
+
+
+        // Bắt sự kiện click vào nút back
+        mBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
+
+
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        // Thực hiện các hành động cần thiết khi quay lại
+        finish(); // Kết thúc Activity hiện tại khi quay lại
+    }
+
+
 
     private Photo getPhotoFromBundle() {
 

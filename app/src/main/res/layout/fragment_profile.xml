@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_profile">
 
     <!--*******Top Tool Bar**********-->
     <Toolbar
@@ -85,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="5dp">
 
 
                 <LinearLayout
@@ -178,25 +179,20 @@
                             android:textSize="16sp"
                             android:textColor="@color/textcolor"/>
 
-
                     </LinearLayout>
 
-
-
                 </LinearLayout>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="25dp"
-                    android:id="@+id/edit_profile"
-                    android:background="@drawable/btn_shape_1"
-                    android:text="Edit Profile"
-                    android:textAllCaps="false"
-                    android:textSize="18sp"
-                    android:layout_gravity="end"/>
-
-
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/edit_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:background="@drawable/btn_shape_1"
+                        android:text="Edit Profile"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        />
+                </LinearLayout>
 
 
         </RelativeLayout>

@@ -9,12 +9,12 @@
     <color name="white">#FFFFFF</color>
 
     <color name="instafirstclor">#3c43e5</color>
-    <color name="instacenterclord">#d34267</color>
+    <color name="instacenterclord">#CECECE</color>
     <color name="instalastclor">#f6ac35</color>
     <color name="statusbarcolo">#CECECE</color>
     <color name="textcolor">#464646</color>
     <color name="icontint">#00363636</color>
-    <color name="yourSelectedColor">#FF0101</color>
+    <color name="yourSelectedColor">#3c43e5</color>
     <color name="darkgray">#AE000000</color>
     <color name="blue_link">#246fd7</color>
     <color name="sky_blue">#007cf7</color>

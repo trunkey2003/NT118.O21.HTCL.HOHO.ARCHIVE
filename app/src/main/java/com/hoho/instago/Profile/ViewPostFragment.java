@@ -19,7 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.hoho.instago.R;
 import com.hoho.instago.Utils.Heart;
 import com.hoho.instago.Utils.SquareImageView;
@@ -44,6 +49,11 @@ import com.hoho.instago.models.Comments;
 import com.hoho.instago.models.Likes;
 import com.hoho.instago.models.Photo;
 import com.hoho.instago.models.Users;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.view.MenuItem;
 
 public class ViewPostFragment extends Fragment {
 
@@ -440,6 +450,13 @@ public class ViewPostFragment extends Fragment {
             }
         });
 
+        moption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
+
         if(mLikedByCurrentUser){
             mHeart.setVisibility(View.GONE);
             mHeartRed.setVisibility(View.VISIBLE);
@@ -485,7 +502,6 @@ public class ViewPostFragment extends Fragment {
 //                mCaption.setText(lusername+" "+lcaption);
                 mProgressBar.setVisibility(View.GONE);
 
-
             }
 
             @Override
@@ -495,6 +511,107 @@ public class ViewPostFragment extends Fragment {
         });
 
     }
+
+    private void showPopupMenu(View view) {
+        PopupMenu popup = new PopupMenu(requireContext(), view);
+        popup.getMenuInflater().inflate(R.menu.more_options_menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        // Xử lý sự kiện xóa ảnh tại đây
+                        deleteImage(mPhoto.getPhoto_id());
+                        return true;
+                    // Xử lý các mục menu khác nếu cần
+                    default:
+                        return false;
+                }
+            }
+        });
+        popup.show();
+    }
+
+    private void deleteImage(final String photoID) {
+        // Chỉ xử lý xóa dữ liệu từ Firebase Database
+        deletePostData(photoID);
+    }
+
+    private void deletePostData(final String photoID) {
+        // Xác định và xóa dữ liệu từ Firebase Database dựa trên photoID
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // Query để tìm và xóa dữ liệu từ User_Photo và Photo
+        Query query = databaseRef.child("User_Photo").child(currentUser.getUid())
+                .orderByChild("photo_id")
+                .equalTo(photoID);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String postId = snapshot.getKey();
+
+                    // Xóa bài đăng từ User_Photo
+                    databaseRef.child("User_Photo").child(currentUser.getUid()).child(postId).removeValue();
+
+                    // Xóa bài đăng từ Photo
+                    databaseRef.child("Photo").child(postId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Xóa thành công dữ liệu từ Firebase Database
+                            Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                            reloadProfileFragment();
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Xảy ra lỗi khi xóa dữ liệu từ Photo
+                            Toast.makeText(requireContext(), "Failed to delete post from Photo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+//                    remove all notifications related to this post id
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications");
+                    reference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("postid").equalTo(photoID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                snapshot.getRef().removeValue();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Xử lý khi có lỗi xảy ra trong quá trình truy vấn
+                            Toast.makeText(requireContext(), "Failed to delete post: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý khi có lỗi xảy ra trong quá trình truy vấn
+                Toast.makeText(requireContext(), "Failed to delete post: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void reloadProfileFragment() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ProfileFragment ProfileFragment = new ProfileFragment();
+        ft.replace(R.id.fragment_container, ProfileFragment); // R.id.fragment_container là ID của container chứa fragment
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+
+
     public void onResume() {
 
         super.onResume();
