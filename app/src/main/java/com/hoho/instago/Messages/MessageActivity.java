@@ -147,6 +147,24 @@ public class MessageActivity extends AppCompatActivity {
                 closeKeyboard();
             }
         });
+
+        // Add a message to the chat after click call
+        // Cannot resolve method 'setOnSendCallInvitationClickListener' in 'ZegoSendCallInvitationButton'
+        voiceCallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String msg = "I have sent you a voice call.";
+                sendMessage(fuser.getUid(), userid, msg);
+            }
+        });
+
+        videoCallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String msg = "I have sent you a video call.";
+                sendMessage(fuser.getUid(), userid, msg);
+            }
+        });
     }
 
     void setVoiceCall(String targetUserID){
